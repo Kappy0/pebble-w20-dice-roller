@@ -1,0 +1,19 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "ryanklaproth@gmail.com",
+    "longName": "W20 Dice Roller",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "W20 Dice Roller",
+    "uuid": "5bccb564-4f04-4402-9154-254249407450",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
