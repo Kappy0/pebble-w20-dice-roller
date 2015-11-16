@@ -3,14 +3,27 @@
     "capabilities": [
         ""
     ],
-    "companyName": "ryanklaproth@gmail.com",
+    "companyName": "Ryan Klaproth",
     "longName": "W20 Dice Roller",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/w20AppIcon.png",
+                "menuIcon": true,
+                "name": "w20_App_Icon",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "W20 Dice Roller",
+    "targetPlatforms": [
+        "basalt"
+    ],
     "uuid": "5bccb564-4f04-4402-9154-254249407450",
     "versionLabel": "1.0",
     "watchapp": {
