@@ -22,7 +22,7 @@ int state = 0;
 int numOne = 0, numExplosions = 0, numSuccess = 0;
 
 //Set up dice and difficulty variables
-int numDice = 0, difficultyNum = 0;
+int numDice = 1, difficultyNum = 6;
 
 //Buffers used to print numDice and difficultyNum
 static char diceBuffer[] = "00000000000";
@@ -30,21 +30,63 @@ static char difficultyBuffer[] = "00000000000";
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 {
-	text_layer_set_text(textLayer1, "");
+	//text_layer_set_text(textLayer1, "");
+	
+	switch(state)
+	{
+		case 0:
+		{
+			state = 1;
+			break;
+		}
+		case 1:
+		{
+			state = 0;
+			break;
+		}
+	}
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 {
-	numDice++;
-	snprintf(diceBuffer, sizeof(diceBuffer), "%d", numDice);
-	text_layer_set_text(clickNumDiceLayer, diceBuffer);
+	switch(state)
+	{
+		case 0:
+		{
+			numDice++;
+			snprintf(diceBuffer, sizeof(diceBuffer), "%d", numDice);
+			text_layer_set_text(clickNumDiceLayer, diceBuffer);
+			break;
+		}
+		case 1:
+		{
+			difficultyNum++;
+			snprintf(difficultyBuffer, sizeof(difficultyBuffer), "%d", difficultyNum);
+			text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
+			break;
+		}
+	}
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context)
 {
-	numDice--;
-	snprintf(diceBuffer, sizeof(diceBuffer), "%d", numDice);
-	text_layer_set_text(clickNumDiceLayer, diceBuffer);
+	switch(state)
+	{
+		case 0:
+		{
+			numDice--;
+			snprintf(diceBuffer, sizeof(diceBuffer), "%d", numDice);
+			text_layer_set_text(clickNumDiceLayer, diceBuffer);
+			break;
+		}
+		case 1:
+		{
+			difficultyNum--;
+			snprintf(difficultyBuffer, sizeof(difficultyBuffer), "%d", difficultyNum);
+			text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
+			break;
+		}
+	}
 }
 
 static void click_config_provider(void *context)
