@@ -3,10 +3,11 @@
 Window *window;
 
 //Set up text layers
-TextLayer *textLayer1; //textLayer1 will be used for numDice and numSuccesses
-TextLayer *textLayer2; //textLayer2 will be used for difficulty and num1's
-//TextLayer *textLayer3; //textLayer3 will used for number of explosions
-//TextLayer *textLayer4; //textLayer4 will be used for number of total successes
+TextLayer *numDiceTextLayer;
+TextLayer *difficultyTextLayer;
+//TextLayer *numOneTextLayer; //Number of dice that rolled 1
+//TextLayer *numExplosionsTextLayer; //Number of dice that rolled 10
+//TextLayer *numSuccessTextLayer; //Total Number of Successes
 
 //Set up click layers
 TextLayer *clickNumDiceLayer;
@@ -24,9 +25,12 @@ int numOne = 0, numExplosions = 0, numSuccess = 0;
 //Set up dice and difficulty variables
 int numDice = 1, difficultyNum = 6;
 
-//Buffers used to print numDice and difficultyNum
-static char diceBuffer[] = "00000000000";
+//Buffers used to print numbers
+static char diceBuffer[] =       "00000000000";
 static char difficultyBuffer[] = "00000000000";
+static char oneBuffer[] =        "00000000000";
+static char explosionBuffer[] =  "00000000000";
+static char successBuffer[] =    "00000000000";
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 {
@@ -103,24 +107,24 @@ static void main_window_load(Window *window)
 	GRect bounds = layer_get_bounds(windowLayer);
 	
 	//Create the TextLayer with specific bounds
-	textLayer1 = text_layer_create(GRect(0, 25, bounds.size.w - 30, 50));
-	textLayer2 = text_layer_create(GRect(-15, 40, bounds.size.w - 30, 50));
+	numDiceTextLayer = text_layer_create(GRect(0, 25, bounds.size.w - 30, 50));
+	difficultyTextLayer = text_layer_create(GRect(-15, 40, bounds.size.w - 30, 50));
 	clickNumDiceLayer = text_layer_create(GRect(100, 25, bounds.size.w - 30, 50));
 	clickDifficultyLayer = text_layer_create(GRect(100, 40, bounds.size.w - 30, 50));
 	
 	//textLayer1
-	text_layer_set_background_color(textLayer1, GColorClear);
-	text_layer_set_text_color(textLayer1, GColorBlack);
-	text_layer_set_text(textLayer1, "Number of Dice: ");
-	text_layer_set_font(textLayer1, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-	text_layer_set_text_alignment(textLayer1, GTextAlignmentCenter);
+	text_layer_set_background_color(numDiceTextLayer, GColorClear);
+	text_layer_set_text_color(numDiceTextLayer, GColorBlack);
+	text_layer_set_text(numDiceTextLayer, "Number of Dice: ");
+	text_layer_set_font(numDiceTextLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+	text_layer_set_text_alignment(numDiceTextLayer, GTextAlignmentCenter);
 	
 	//textLayer2
-	text_layer_set_background_color(textLayer2, GColorClear);
-	text_layer_set_text_color(textLayer2, GColorBlack);
-	text_layer_set_text(textLayer2, "Difficulty: ");
-	text_layer_set_font(textLayer2, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-	text_layer_set_text_alignment(textLayer2, GTextAlignmentCenter);
+	text_layer_set_background_color(difficultyTextLayer, GColorClear);
+	text_layer_set_text_color(difficultyTextLayer, GColorBlack);
+	text_layer_set_text(difficultyTextLayer, "Difficulty: ");
+	text_layer_set_font(difficultyTextLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+	text_layer_set_text_alignment(difficultyTextLayer, GTextAlignmentCenter);
 	
 	//clickNumLayer
 	text_layer_set_text_color(clickNumDiceLayer, GColorBlack);
@@ -135,8 +139,8 @@ static void main_window_load(Window *window)
 	text_layer_set_font(clickDifficultyLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 	
 	//Add text layer as a child layer to the Window's root layer
-	layer_add_child(windowLayer, text_layer_get_layer(textLayer1));
-	layer_add_child(windowLayer, text_layer_get_layer(textLayer2));
+	layer_add_child(windowLayer, text_layer_get_layer(numDiceTextLayer));
+	layer_add_child(windowLayer, text_layer_get_layer(difficultyTextLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(clickNumDiceLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(clickDifficultyLayer));
 }
@@ -144,8 +148,8 @@ static void main_window_load(Window *window)
 static void main_window_unload(Window *window) 
 {
 	//Destroy text layers
-	text_layer_destroy(textLayer1);
-	text_layer_destroy(textLayer2);
+	text_layer_destroy(numDiceTextLayer);
+	text_layer_destroy(difficultyTextLayer);
 	text_layer_destroy(clickNumDiceLayer);
 	text_layer_destroy(clickDifficultyLayer);
 }
