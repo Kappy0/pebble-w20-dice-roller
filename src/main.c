@@ -6,8 +6,8 @@ Window *window;
 TextLayer *numDiceTextLayer;
 TextLayer *difficultyTextLayer;
 TextLayer *numOneTextLayer; //Number of dice that rolled 1
-//TextLayer *numExplosionsTextLayer; //Number of dice that rolled 10
-//TextLayer *numSuccessTextLayer; //Total Number of Successes
+TextLayer *numExplosionsTextLayer; //Number of dice that rolled 10
+TextLayer *numSuccessTextLayer; //Total Number of Successes
 
 //Set up click layers
 TextLayer *clickNumDiceLayer;
@@ -29,8 +29,8 @@ int numDice = 1, difficultyNum = 6;
 static char diceBuffer[] =       "00000000000";
 static char difficultyBuffer[] = "00000000000";
 char oneBuffer[25];
-//static char explosionBuffer[] =  "00000000000";
-//static char successBuffer[] =    "00000000000";
+char explosionBuffer[35];
+char successBuffer[25];
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 {
@@ -45,15 +45,26 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 		{			
 			state = 2;
 			
-			//numOneTextLayerVisible
+			//Turn results visible
 			snprintf(oneBuffer, sizeof(oneBuffer), "Number of 1's: %d", numOne);
 			text_layer_set_text(numOneTextLayer, oneBuffer);
+			
+			snprintf(explosionBuffer, sizeof(explosionBuffer), "Number of Explosions: %d", numExplosions);
+			text_layer_set_text(numExplosionsTextLayer, explosionBuffer);
+			
+			snprintf(successBuffer, sizeof(successBuffer), "Number of Successes: %d", numSuccess);
+			text_layer_set_text(numSuccessTextLayer, successBuffer);
 			
 			break;
 		}
 		case 2:
 		{
 			state = 0;
+			
+			//Turn Results invisible 
+			text_layer_set_text(numOneTextLayer, "");
+			text_layer_set_text(numExplosionsTextLayer, "");
+			text_layer_set_text(numSuccessTextLayer, "");
 		}
 	}
 }
@@ -74,7 +85,6 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 			difficultyNum++;
 			snprintf(difficultyBuffer, sizeof(difficultyBuffer), "%d", difficultyNum);
 			text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
-			break;
 		}
 	}
 }
@@ -95,7 +105,6 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context)
 			difficultyNum--;
 			snprintf(difficultyBuffer, sizeof(difficultyBuffer), "%d", difficultyNum);
 			text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
-			break;
 		}
 	}
 }
@@ -116,7 +125,9 @@ static void main_window_load(Window *window)
 	//Create identifier text layers
 	numDiceTextLayer = text_layer_create(GRect(0, 25, bounds.size.w - 30, 50));
 	difficultyTextLayer = text_layer_create(GRect(-14, 40, bounds.size.w - 30, 50));
-	numOneTextLayer = text_layer_create(GRect(0, 70, bounds.size.w - 30, 50));
+	numOneTextLayer = text_layer_create(GRect(10, 70, bounds.size.w, 50));
+	numExplosionsTextLayer = text_layer_create(GRect(10, 85, bounds.size.w, 50));
+	numSuccessTextLayer = text_layer_create(GRect(10, 100, bounds.size.w, 50));
 	
 	//Number text layers
 	clickNumDiceLayer = text_layer_create(GRect(100, 25, bounds.size.w - 30, 50));
@@ -141,7 +152,21 @@ static void main_window_load(Window *window)
 	text_layer_set_text_color(numOneTextLayer, GColorBlack);
 	text_layer_set_text(numOneTextLayer, "");
 	text_layer_set_font(numOneTextLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-	text_layer_set_text_alignment(numOneTextLayer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(numOneTextLayer, GTextAlignmentLeft);
+	
+	//numExplosionsTextLayer
+	text_layer_set_background_color(numExplosionsTextLayer, GColorClear);
+	text_layer_set_text_color(numExplosionsTextLayer, GColorBlack);
+	text_layer_set_text(numExplosionsTextLayer, "");
+	text_layer_set_font(numExplosionsTextLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+	text_layer_set_text_alignment(numExplosionsTextLayer, GTextAlignmentLeft);
+	
+	//numSuccessTextLayer
+	text_layer_set_background_color(numSuccessTextLayer, GColorClear);
+	text_layer_set_text_color(numSuccessTextLayer, GColorBlack);
+	text_layer_set_text(numSuccessTextLayer, "");
+	text_layer_set_font(numSuccessTextLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+	text_layer_set_text_alignment(numSuccessTextLayer, GTextAlignmentLeft);
 	
 	//clickNumLayer
 	text_layer_set_text_color(clickNumDiceLayer, GColorBlack);
@@ -155,12 +180,14 @@ static void main_window_load(Window *window)
 	text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
 	text_layer_set_font(clickDifficultyLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 	
-	//Add text layer as a child layer to the Window's root layer
+	//Add text layers as a child layer to the Window's root layer
 	layer_add_child(windowLayer, text_layer_get_layer(numDiceTextLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(difficultyTextLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(clickNumDiceLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(clickDifficultyLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(numOneTextLayer));
+	layer_add_child(windowLayer, text_layer_get_layer(numExplosionsTextLayer));
+	layer_add_child(windowLayer, text_layer_get_layer(numSuccessTextLayer));
 }
 
 static void main_window_unload(Window *window) 
@@ -171,6 +198,8 @@ static void main_window_unload(Window *window)
 	text_layer_destroy(clickNumDiceLayer);
 	text_layer_destroy(clickDifficultyLayer);
 	text_layer_destroy(numOneTextLayer);
+	text_layer_destroy(numExplosionsTextLayer);
+	text_layer_destroy(numSuccessTextLayer);
 }
 
 static void init() 
