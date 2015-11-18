@@ -82,7 +82,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 		}
 		case 1:
 		{
-			difficultyNum++;
+			if(difficultyNum < 10) difficultyNum++;
 			snprintf(difficultyBuffer, sizeof(difficultyBuffer), "%d", difficultyNum);
 			text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
 		}
@@ -102,7 +102,8 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context)
 		}
 		case 1:
 		{
-			difficultyNum--;
+			
+			if(difficultyNum > 1) difficultyNum--;
 			snprintf(difficultyBuffer, sizeof(difficultyBuffer), "%d", difficultyNum);
 			text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
 		}
