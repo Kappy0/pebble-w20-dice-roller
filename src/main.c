@@ -32,6 +32,16 @@ char oneBuffer[25];
 char explosionBuffer[35];
 char successBuffer[25];
 
+// static void roll_dice(int num_dice)
+// {	
+// 	int dice[num_dice];
+	
+// 	for(int i = 0; i < num_dice; i++)
+// 	{
+// 		dice[i] = (rand() % 10) + 1;
+// 	}
+// }
+
 static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 {
 	switch(state)
@@ -44,6 +54,10 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 		case 1:
 		{			
 			state = 2;
+			
+			srand(time(NULL));
+			
+			roll_dice(numDice);
 			
 			//Turn results visible
 			snprintf(oneBuffer, sizeof(oneBuffer), "Number of 1's: %d", numOne);
