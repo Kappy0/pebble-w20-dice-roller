@@ -22,6 +22,9 @@ int state = 0;
 //Set up result variables
 int numOne = 0, numExplosions = 0, numSuccess = 0;
 
+//Temporary explosions variable
+int tempExplosions = 0;
+
 //Set up dice and difficulty variables
 int numDice = 1, difficultyNum = 6;
 
@@ -32,15 +35,42 @@ char oneBuffer[25];
 char explosionBuffer[35];
 char successBuffer[25];
 
-// static void roll_dice(int num_dice)
-// {	
-// 	int dice[num_dice];
+static void calculate_result(int roll_num)
+{
+	if(roll_num == 1)
+	{
+		numOne++;
+	}
 	
-// 	for(int i = 0; i < num_dice; i++)
-// 	{
-// 		dice[i] = (rand() % 10) + 1;
-// 	}
-// }
+	if(roll_num > difficultyNum)
+	{
+		numSuccess++;
+	}	
+	
+	if(roll_num == 10)
+	{
+		tempExplosions++;
+	}	
+}	
+
+static void roll_dice(int num_dice)
+{		
+	int dice[num_dice];
+	tempExplosions = 0;
+	
+	for(int i = 0; i < num_dice; i++)
+	{
+		dice[i] = (rand() % 10) + 1;
+		calculate_result(dice[i]);
+	}
+	
+	numExplosions += tempExplosions;
+	
+	if(tempExplosions > 0)
+	{
+		roll_dice(tempExplosions);
+	}
+}
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 {
@@ -79,6 +109,11 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 			text_layer_set_text(numOneTextLayer, "");
 			text_layer_set_text(numExplosionsTextLayer, "");
 			text_layer_set_text(numSuccessTextLayer, "");
+			
+			//Reset numOne, numExplosions, and numSuccess
+			numOne = 0;
+			numExplosions = 0;
+			numSuccess = 0;
 		}
 	}
 }
