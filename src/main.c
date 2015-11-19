@@ -5,9 +5,10 @@ Window *window;
 //Set up text layers
 TextLayer *numDiceTextLayer;
 TextLayer *difficultyTextLayer;
-TextLayer *numOneTextLayer; //Number of dice that rolled 1
-TextLayer *numExplosionsTextLayer; //Number of dice that rolled 10
-TextLayer *numSuccessTextLayer; //Total Number of Successes
+TextLayer *numOneTextLayer; //Total Number of dice that rolled 1
+TextLayer *numExplosionsTextLayer; //Total Number of dice that rolled 10
+TextLayer *numSuccessTextLayer; //Number of Successes
+TextLayer *resultTextLayer; //Final Result Layer
 
 //Set up click layers
 TextLayer *clickNumDiceLayer;
@@ -20,7 +21,7 @@ TextLayer *clickDifficultyLayer;
 int state = 0; 
 
 //Set up result variables
-int numOne = 0, numExplosions = 0, numSuccess = 0;
+int numOne = 0, numExplosions = 0, numSuccess = 0, totalSuccess = 0;
 
 //Temporary explosions variable
 int tempExplosions = 0;
@@ -34,6 +35,10 @@ static char difficultyBuffer[] = "00000000000";
 char oneBuffer[25];
 char explosionBuffer[35];
 char successBuffer[25];
+char resultBuffer[20];
+
+//Variable used to flag if the roll was a botch or not
+bool botch = false;
 
 static void calculate_result(int roll_num)
 {
@@ -70,6 +75,11 @@ static void roll_dice(int num_dice)
 	{
 		roll_dice(tempExplosions);
 	}
+	
+	if(numOne > 0 && numSuccess == 0)
+	{
+		botch = true;
+	}
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context)
@@ -99,6 +109,25 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 			snprintf(successBuffer, sizeof(successBuffer), "Number of Successes: %d", numSuccess);
 			text_layer_set_text(numSuccessTextLayer, successBuffer);
 			
+			if(numOne > numSuccess)
+			{
+				totalSuccess = 0;
+			}
+			else
+			{
+				totalSuccess = numSuccess - numOne;
+			}
+			
+			if(!botch)
+			{
+				snprintf(resultBuffer, sizeof(resultBuffer), "Total Successes: %d", totalSuccess);
+				text_layer_set_text(resultTextLayer, resultBuffer);
+			}
+			else
+			{
+				text_layer_set_text(resultTextLayer, "Botch!");
+			}	
+			
 			break;
 		}
 		case 2:
@@ -109,6 +138,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 			text_layer_set_text(numOneTextLayer, "");
 			text_layer_set_text(numExplosionsTextLayer, "");
 			text_layer_set_text(numSuccessTextLayer, "");
+			text_layer_set_text(resultTextLayer, "");
 			
 			//Reset numOne, numExplosions, and numSuccess
 			numOne = 0;
@@ -151,7 +181,6 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context)
 		}
 		case 1:
 		{
-			
 			if(difficultyNum > 1) difficultyNum--;
 			snprintf(difficultyBuffer, sizeof(difficultyBuffer), "%d", difficultyNum);
 			text_layer_set_text(clickDifficultyLayer, difficultyBuffer);
@@ -178,6 +207,7 @@ static void main_window_load(Window *window)
 	numOneTextLayer = text_layer_create(GRect(10, 70, bounds.size.w, 50));
 	numExplosionsTextLayer = text_layer_create(GRect(10, 85, bounds.size.w, 50));
 	numSuccessTextLayer = text_layer_create(GRect(10, 100, bounds.size.w, 50));
+	resultTextLayer = text_layer_create(GRect(8, 125, bounds.size.w, 50));
 	
 	//Number text layers
 	clickNumDiceLayer = text_layer_create(GRect(100, 25, bounds.size.w - 30, 50));
@@ -218,6 +248,13 @@ static void main_window_load(Window *window)
 	text_layer_set_font(numSuccessTextLayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 	text_layer_set_text_alignment(numSuccessTextLayer, GTextAlignmentLeft);
 	
+	//resultTextLayer
+	text_layer_set_background_color(resultTextLayer, GColorClear);
+	text_layer_set_text_color(resultTextLayer, GColorBlack);
+	text_layer_set_text(resultTextLayer, "");
+	text_layer_set_font(resultTextLayer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+	text_layer_set_text_alignment(resultTextLayer, GTextAlignmentLeft);
+	
 	//clickNumLayer
 	text_layer_set_text_color(clickNumDiceLayer, GColorBlack);
 	snprintf(diceBuffer, sizeof(diceBuffer), "%d", numDice);
@@ -238,6 +275,7 @@ static void main_window_load(Window *window)
 	layer_add_child(windowLayer, text_layer_get_layer(numOneTextLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(numExplosionsTextLayer));
 	layer_add_child(windowLayer, text_layer_get_layer(numSuccessTextLayer));
+	layer_add_child(windowLayer, text_layer_get_layer(resultTextLayer));
 }
 
 static void main_window_unload(Window *window) 
@@ -250,6 +288,7 @@ static void main_window_unload(Window *window)
 	text_layer_destroy(numOneTextLayer);
 	text_layer_destroy(numExplosionsTextLayer);
 	text_layer_destroy(numSuccessTextLayer);
+	text_layer_destroy(resultTextLayer);
 }
 
 static void init() 
